@@ -19,5 +19,5 @@ This repository provides a framework for extracting and classifying machine lear
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ml-algorithm-extractor.git
+   git clone https://github.com/SepidehNahali/ml-algorithm-extractor.git
    cd ml-algorithm-extractor
