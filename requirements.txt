@@ -1,0 +1,3 @@
+spacy
+re
+pytest
