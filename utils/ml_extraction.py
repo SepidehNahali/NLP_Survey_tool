@@ -1,32 +1,49 @@
 import re
+from collections import defaultdict
+from text_processing import preprocess_text
 
+# Define algorithm and model types
 algorithm_types = {
-    "supervised": ["linear regression", "decision tree", "svm"],
-    "unsupervised": ["k-means", "pca"],
-    "semi-supervised": ["self-training", "co-training"],
-    "reinforcement": ["q-learning", "policy gradient"]
+    'supervised': ['linear regression', 'logistic regression', 'svm', 'decision tree'],
+    'unsupervised': ['k-means', 'dbscan', 'hierarchical clustering'],
+    'semi-supervised': ['self-training', 'co-training'],
+    'reinforcement': ['q-learning', 'ppo', 'ddpg']
 }
 
 model_types = {
-    "transformers": ["BERT", "GPT"],
-    "cnn": ["ResNet", "VGG"],
-    "rnn": ["LSTM", "GRU"]
+    'neural networks': ['cnn', 'rnn', 'transformer'],
+    'tree-based': ['xgboost', 'random forest', 'gradient boosting'],
+    'ensemble': ['bagging', 'stacking']
 }
 
+# Function to classify ML algorithms in text
 def classify_ml_algorithms(text):
-    """Classify ML algorithms in the text by type."""
-    results = {key: [] for key in algorithm_types}
-    for algo_type, algo_list in algorithm_types.items():
-        for algo in algo_list:
-            if re.search(rf'\b{algo.lower()}\b', text.lower()):
-                results[algo_type].append(algo)
-    return results
+    doc = preprocess_text(text)
+    classified = defaultdict(list)
 
+    for token in doc:
+        for algo_type, algo_list in algorithm_types.items():
+            if token.text.lower() in map(str.lower, algo_list):
+                classified[algo_type].append(token.text)
+
+    for key in classified:
+        classified[key] = list(set(classified[key]))
+
+    return classified
+
+# Function to extract specific ML models
 def extract_model_types(text):
-    """Extract specific model names in the text."""
-    results = {key: [] for key in model_types}
-    for model_family, models in model_types.items():
-        for model in models:
-            if re.search(rf'\b{model.lower()}\b', text.lower()):
-                results[model_family].append(model)
-    return results
+    doc = preprocess_text(text)
+    models_found = defaultdict(list)
+
+    for token in doc:
+        token_text = token.text.lower()
+        for model_family, model_list in model_types.items():
+            for model in model_list:
+                if re.search(rf'\b{model.lower()}\b', token_text):
+                    models_found[model_family].append(model)
+
+    for key in models_found:
+        models_found[key] = list(set(models_found[key]))
+
+    return models_found
