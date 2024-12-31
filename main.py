@@ -2,6 +2,39 @@ from utils.text_processing import preprocess_text
 from utils.ml_extraction import classify_ml_algorithms, extract_model_types
 from utils.output_formatter import clean_and_format_results
 import os
+from pdf_extraction import *
+from web_extraction import *
+from url_processing import *
+from text_cleaning import *
+from tqdm import tqdm
+
+def process_urls(urls):
+    results = {}
+    for url in tqdm(urls, desc="Processing URLs", unit="url"):
+        abstract1, methodology1, text_content1 = extract_content_with_pdf(url)
+        abstract2, methodology2, text_content2 = extract_content_with_soup(url)
+
+        abstract = abstract1 + abstract2
+        methodology = methodology1 + methodology2
+        text_content = text_content1 + text_content2
+
+        cleaned_abstract = clean_text_field(abstract) if abstract else ''
+        cleaned_methodology = clean_text_field(methodology) if methodology else ''
+        cleaned_text_content = clean_text_field(text_content) if text_content else ''
+
+        results[url] = {
+            "abstract": cleaned_abstract,
+            "methodology": cleaned_methodology,
+            "text_content": cleaned_text_content
+        }
+    print(f'Processed {len(results.keys())} URLs.')
+    return results
+
+# Example usage
+filtered_links = clean_and_filter_urls("/path/to/your/htmlfile.html")
+results_dict = process_urls(filtered_links)
+
+
 
 def main():
     # Load input sample (replace with actual file loading in practice)
